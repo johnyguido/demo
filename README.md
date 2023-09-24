@@ -4,12 +4,6 @@
 
 Este projeto é uma simulação de conta bancária desenvolvida com o objetivo principal de aprimorar e compartilhar conhecimentos nas tecnologias relacionadas ao ecossistema JAVA. 
 
-Utiliza as seguintes tecnologias:
-
-    Spring Boot: Para a construção de uma aplicação robusta e escalável.
-    JUnit: Para testes unitários que garantem a qualidade do código.
-    PiTest: Para a análise de cobertura de código e a identificação de áreas que precisam de maior atenção.
-
 ## :man_mechanic: Linguagens e Ferramentas
 
 - JAVA 11
