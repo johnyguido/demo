@@ -4,10 +4,10 @@ import com.johny.demo.negocio.Cliente;
 import com.johny.demo.negocio.ContaCorrente;
 import com.johny.demo.negocio.GerenciadoraClientes;
 import com.johny.demo.negocio.GerenciadoraContas;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -25,10 +25,12 @@ public class DemoApplication {
 @Component
 class MyCommandLineRunner implements CommandLineRunner {
 
+	private final ApplicationContext applicationContext;
 	private GerenciadoraClientes gerClientes;
 	private GerenciadoraContas gerContas;
 
-	public MyCommandLineRunner(GerenciadoraClientes gerClientes, GerenciadoraContas gerContas) {
+	public MyCommandLineRunner(ApplicationContext applicationContext, GerenciadoraClientes gerClientes, GerenciadoraContas gerContas) {
+		this.applicationContext = applicationContext;
 		this.gerClientes = gerClientes;
 		this.gerContas = gerContas;
 	}
@@ -43,12 +45,22 @@ class MyCommandLineRunner implements CommandLineRunner {
 		while (continua) {
 			printMenu();
 
-			int opcao = sc.nextInt();
+			int opcao;
+			while (true) {
+				System.out.print("Digite uma opção: ");
+				if (sc.hasNextInt()) {
+					opcao = sc.nextInt();
+					break;
+				} else {
+					System.out.println("Entrada inválida. Por favor, digite um número.");
+					sc.next();
+				}
+			}
 
 			switch (opcao) {
 				case 1:
 					// Consultar por um cliente
-					System.out.print("Digite o ID do cliente: ");
+					System.out.print("DIGITE A OPCÃO DESEJADA: ");
 					int idCliente = sc.nextInt();
 					Cliente cliente = gerClientes.pesquisaCliente(idCliente);
 
@@ -105,19 +117,24 @@ class MyCommandLineRunner implements CommandLineRunner {
 					break;
 
 				case 5:
+					System.out.println("LISTANDO TODOS OS CLIENTES");
+					gerClientes.getClientesDoBanco().forEach(clienteBanco -> System.out.println(clienteBanco));
+					break;
+
+				case 6:
 					continua = false;
 					System.out.println("################# Sistema encerrado #################");
+					SpringApplication.exit(applicationContext);
 					break;
 
 				default:
 					System.out.println();
-					System.out.println();
-					System.out.println();
-					System.out.println();
-					System.out.println();
+					System.out.println("Opção inválida. Por favor, escolha uma opção válida.");
 					break;
 			}
 		}
+
+		sc.close();
 	}
 
 	private void pulalinha() {
@@ -125,12 +142,14 @@ class MyCommandLineRunner implements CommandLineRunner {
 	}
 
 	private void printMenu() {
+		System.out.println("\n ### MODO INTERATIVO ### \n");
 		System.out.println("O que você deseja fazer? \n");
 		System.out.println("1) Consultar por um cliente");
 		System.out.println("2) Consultar por uma conta corrente");
 		System.out.println("3) Ativar um cliente");
 		System.out.println("4) Desativar um cliente");
-		System.out.println("5) Sair");
+		System.out.println("5) Listar todos os clientes");
+		System.out.println("6) Sair");
 		System.out.println();
 	}
 
@@ -140,11 +159,13 @@ class MyCommandLineRunner implements CommandLineRunner {
 
 		ContaCorrente conta01 = new ContaCorrente(1, 0, true);
 		ContaCorrente conta02 = new ContaCorrente(2, 0, true);
+
 		contasDoBanco.add(conta01);
 		contasDoBanco.add(conta02);
 
-		Cliente cliente01 = new Cliente(1, "Gustavo Farias", 31, "gugafarias@gmail.com", conta01.getId(), true);
-		Cliente cliente02 = new Cliente(2, "Felipe Augusto", 34, "felipeaugusto@gmail.com", conta02.getId(), true);
+		Cliente cliente01 = new Cliente(1, "Fulano Detal", 31, "fulano@fakemail.com", 1, true);
+		Cliente cliente02 = new Cliente(2, "Ciclano das Couves", 34, "ciclano@fakemail.com", 2, true);
+
 		clientesDoBanco.add(cliente01);
 		clientesDoBanco.add(cliente02);
 
